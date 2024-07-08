@@ -6,6 +6,7 @@ import ContainedButton from "../../buttons/ContainedButton";
 import { useContext, useState } from "react";
 import { MainContext } from "../../../contexts/MainContext";
 import Transaction from "../../../classes/Transaction";
+import { COIN } from "../../../utils/constants";
 
 const wrapperStyle = {
   maxWidth: "736px",
@@ -77,7 +78,7 @@ export default function DashboardSendSection() {
               <Grid item xs={6}>
                 <Input
                   label="Coin"
-                  value="LMAO"
+                  value={COIN}
                   InputLabelProps={{
                     shrink: true,
                   }}

@@ -1,6 +1,7 @@
 import {Avatar,Box,Chip,Link,ListItem,ListItemIcon,ListItemText, listItemTextClasses, Typography,typographyClasses,} from "@mui/material";
 import { MintService } from "../../../services/mint.service";
 import { addressLabel } from "../../../utils/adress-label";
+import { COIN } from "../../../utils/constants";
 
 const smallTextStyle = {
     [`& .${typographyClasses.root}`]: {
@@ -96,7 +97,7 @@ export default function TransactionListItem({txHash, fromAddress, toAddress, amo
           </Box>
 
         <Box sx={chipWrapperStyle}>
-          <Chip label={`${amount} LMAO`} />
+          <Chip label={`${amount} ${COIN}`} />
         </Box>
 
       </ListItem>

@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { useContext } from "react";
 import { MainContext } from "../../../contexts/MainContext";
 import Paper from "../Paper";
+import { COIN } from "../../../utils/constants";
 
 const containerStyle = {
   minHeight: "352px",
@@ -23,11 +24,11 @@ export default function CoinBalanceSection() {
     <Paper>
       <Box sx={containerStyle} component="section">
         <Typography variant="h6" fontWeight={700}>
-          My LMAO balance is
+          My {COIN} balance is
         </Typography>
         <Box marginTop={3}>
           <Typography variant="h4" fontWeight={700}>
-            {balance} LMAO
+            {balance} {COIN}
           </Typography>
         </Box>
       </Box>

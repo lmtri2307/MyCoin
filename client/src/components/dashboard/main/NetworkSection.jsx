@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import Paper from "../Paper";
+import { COIN } from "../../../utils/constants";
 
 const wrapperStyle = {
   minHeight: "132px",
@@ -17,7 +18,7 @@ export default function NetworkSection() {
           </Typography>
           <Box marginTop={2}>
             <Typography variant="body2" marginBottom={1}>
-              LMAO 
+              {COIN} 
             </Typography>
             <Typography variant="body2">Last Black: 0</Typography>
           </Box>
