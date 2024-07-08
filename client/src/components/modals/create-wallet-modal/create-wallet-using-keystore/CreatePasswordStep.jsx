@@ -9,14 +9,17 @@ import { CreateWalletUsingKeystoreContext } from "../../../../contexts/CreateWal
 export default function CreatePasswordStep() {
   const { handleNext } = useContext(StepperContext);
 
+
   const { handleCreatePassword, downloadLink } = useContext(
     CreateWalletUsingKeystoreContext,
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const [password, setPassword] = useState("");
 
   const [confirmedPassword, setConfirmedPassword] = useState("");
 
+  console.log('isLoading', isLoading);
   useEffect(() => {
     if (downloadLink) {
       handleNext();
@@ -31,8 +34,11 @@ export default function CreatePasswordStep() {
     setConfirmedPassword(e.target.value);
   };
 
-  const handleOnClickCreateWalletButton = () => {
-    handleCreatePassword(password);
+  const handleOnClickCreateWalletButton = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await handleCreatePassword(password);
+    setIsLoading(false);
   };
 
   return (
@@ -64,6 +70,7 @@ export default function CreatePasswordStep() {
               (confirmedPassword !== "") & (password === confirmedPassword)
             )
           }
+          loading={isLoading}
           onClick={handleOnClickCreateWalletButton}>
           Create Wallet
         </ContainedButton>
