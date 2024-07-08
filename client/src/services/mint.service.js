@@ -8,4 +8,5 @@ export class MintService {
     "hex",
   );
   static MINT_PUBLIC_ADDRESS = this.MINT_KEY_PAIR.getPublic("hex");
+  static MINT_NAME = "System"
 }

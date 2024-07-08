@@ -4,6 +4,7 @@ import { MainContext } from "../../../contexts/MainContext";
 import ContainedButton from "../../buttons/ContainedButton";
 import DashboardContent from "../DashboardContent";
 import Paper from "../Paper";
+import { addressLabel } from "../../../utils/adress-label";
   
 const cellStyle = {
     maxWidth: "250px",
@@ -39,7 +40,7 @@ export default function DashboardPendingTransaction() {
                     {index}
                   </TableCell>
                   <TableCell sx={cellStyle} align="right">
-                    {tx.fromAddress}
+                    {addressLabel(tx.fromAddress)}
                   </TableCell>
                   <TableCell sx={cellStyle} align="right">
                     {tx.toAddress}

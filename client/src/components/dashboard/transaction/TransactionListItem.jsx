@@ -1,5 +1,6 @@
 import {Avatar,Box,Chip,Link,ListItem,ListItemIcon,ListItemText, listItemTextClasses, Typography,typographyClasses,} from "@mui/material";
 import { MintService } from "../../../services/mint.service";
+import { addressLabel } from "../../../utils/adress-label";
 
 const smallTextStyle = {
     [`& .${typographyClasses.root}`]: {
@@ -73,7 +74,7 @@ export default function TransactionListItem({txHash, fromAddress, toAddress, amo
                   From{" "}
                   {fromAddress ? (
                     <Link href="#" underline="none">
-                      {fromAddress}
+                      {addressLabel(fromAddress)}
                     </Link>
                   ) : (
                     "System (Block Reward)"

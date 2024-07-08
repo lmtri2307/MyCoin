@@ -2,6 +2,7 @@ import {Box,Divider,List,ListItem,ListItemText,listItemTextClasses,Typography, t
 import { useContext } from "react";
 import { MainContext } from "../../../contexts/MainContext";
 import Paper from "../Paper";
+import { addressLabel } from "../../../utils/adress-label";
   
 const wrapperStyle = {
   padding: "12px 0 10px",
@@ -83,7 +84,9 @@ export default function TransactionDetail({ txObj, txHash }) {
           <ListItem sx={listItemStyle}>
             <ListItemText primary={<Typography>From:</Typography>}/>
             <ListItemText
-              primary={<Typography>{tx.fromAddress}</Typography>}/>
+              primary={<Typography>{
+                addressLabel(tx.fromAddress)
+              }</Typography>}/>
           </ListItem>
 
           <ListItem sx={listItemStyle}>
