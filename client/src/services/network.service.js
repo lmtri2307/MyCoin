@@ -2,7 +2,7 @@ import socketIoClient from "socket.io-client";
 import Peer from "simple-peer";
 import Transaction from "../classes/Transaction";
 import Block from "../classes/Block";
-import Blockchain from "../classes/Blockchain";
+import Blockchain from "../classes/BlockChain";
 import { MintService } from "./mint.service";
 
 // using send method for data transfer

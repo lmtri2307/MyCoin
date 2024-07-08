@@ -1,4 +1,4 @@
-import Blockchain from "../classes/Blockchain";
+import Blockchain from "../classes/BlockChain";
 
 export class BlockchainService {
   blockchainInstance = new Blockchain();
