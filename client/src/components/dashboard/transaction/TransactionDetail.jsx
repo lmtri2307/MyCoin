@@ -20,15 +20,16 @@ const titleStyle = {
 const listItemStyle = {
   [`& .${listItemTextClasses.root}:first-of-type`]: {
     maxWidth: "500px",
+    flex: "1",
   },
 
     
   [`& .${listItemTextClasses.root}:last-of-type`]: {
+    flex: "3",
     [`& .${typographyClasses.root}`]: {
-      maxWidth: "500px",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
+      whiteSpace: "normal",
+      wordWrap: "break-word",
+      overflowWrap: "break-word",
     },
   },
 };
