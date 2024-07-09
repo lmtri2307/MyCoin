@@ -30,7 +30,6 @@ export default function EnterPasswordStep() {
 
     if (wallet) {
       handleSetWallet(wallet);
-      navigate("/wallet/dashboard/main");
     } 
     else {
       setIsLoading(false);
