@@ -26,10 +26,8 @@ export class WalletService {
             if (!privateKeyString) {
                 return null;
             }
-            const privateKey = Buffer.from(privateKeyString, "hex");
-            const wallet = Wallet.fromPrivateKey(privateKey);
-            const addedKeyWallet = addSigningKeyObj(wallet);
-            return addedKeyWallet;
+            const wallet = WalletService.fromPrivateKey(privateKeyString);
+            return wallet;
         }
         catch (e) {
             return null;
@@ -57,5 +55,11 @@ export class WalletService {
     }
     static clearWallet = async () => {
         sessionStorage.removeItem(walletKey);
+    }
+    static fromPrivateKey = privateKey => {
+        const privateKeyBuffer = Buffer.from(privateKey, "hex");
+        const wallet = Wallet.fromPrivateKey(privateKeyBuffer);
+        const addedKeyWallet = addSigningKeyObj(wallet);
+        return addedKeyWallet;
     }
 }

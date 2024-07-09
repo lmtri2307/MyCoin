@@ -1,14 +1,22 @@
 import { Box, Stack, Typography } from "@mui/material";
 import ContainedButton from "../../../buttons/ContainedButton";
 import ModalInput from "../../../input/Input";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { WalletService } from "../../../../services/wallet.service";
+import { MainContext } from "../../../../contexts/MainContext";
 
 export default function AccessWalletUsingPrivateKey() {
   const [privateKey, setPrivateKey] = useState("");
+  const { handleSetWallet } = useContext(MainContext)
 
   const handleOnChangePrivateKey = e => {
     setPrivateKey(e.target.value);
   };
+
+  const handleAccessWallet = () => {
+    const wallet = WalletService.fromPrivateKey(privateKey);
+    handleSetWallet(wallet)
+  }
 
   return (
     <Stack spacing={3}>
@@ -23,7 +31,12 @@ export default function AccessWalletUsingPrivateKey() {
         />
       </Stack>
       <Box>
-        <ContainedButton disabled>Access Wallet</ContainedButton>
+        <ContainedButton 
+          onClick={handleAccessWallet}
+          disabled={!privateKey}
+        >
+          Access Wallet
+        </ContainedButton>
       </Box>
     </Stack>
   );
