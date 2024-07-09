@@ -1,10 +1,9 @@
-import EC from "elliptic";
-import Wallet from "ethereumjs-wallet";
 import { useState } from "react";
 import ModalStepper from "../../ModalStepper";
 import EnterPasswordStep from "./EnterPasswordStep";
 import SelectFileStep from "./SelectFileStep";
 import { AccessWalletUsingKeystoreContext } from "../../../../contexts/AccessWalletUsingKeystoreContext";
+import { WalletService } from "../../../../services/wallet.service";
 
 const steps = ["STEP 1. Select File", "STEP 2. Enter password"];
 
@@ -19,11 +18,7 @@ export default function AccessWalletUsingKeystore() {
 
   const handleAccessWallet = async password => {
     try {
-      const wallet = await Wallet.fromV3(keystore, password);
-      const keyObj = new EC.ec("secp256k1").keyFromPrivate(
-        wallet.getPrivateKey(),
-      );
-      wallet["signingKeyObj"] = keyObj;
+      const wallet = WalletService.fromKeyStore(keystore, password);
       return wallet;
     } 
     catch (e) {

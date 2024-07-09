@@ -14,8 +14,8 @@ import { BlockchainService } from "./services/blockchain.service";
 import PrivateRoute from "./routers/PrivateRoute";
 import { NetworkService } from "./services/network.service";
 import { MintService } from "./services/mint.service";
-import { loadWallet, saveWallet } from "./utils/wallet";
 import { useNavigate } from "react-router-dom";
+import { WalletService } from "./services/wallet.service";
 
 function App() {
   const nagivate = useNavigate();
@@ -25,7 +25,7 @@ function App() {
   useEffect(() => {
     let needToCleanUp = false;
     const loadWalletFromStorage = async () => {
-      const wallet = await loadWallet();
+      const wallet = await WalletService.loadWallet();
       if (!wallet) return;
       if (needToCleanUp) return;
       handleSetWallet(wallet);
@@ -37,7 +37,7 @@ function App() {
   }, []);
 
   const handleSetWallet = wallet => {
-    saveWallet(wallet);
+    WalletService.saveWallet(wallet);
     const mintService = new MintService();
     const newBlockchainService = new BlockchainService(wallet);
     setBlockchainService(newBlockchainService);
