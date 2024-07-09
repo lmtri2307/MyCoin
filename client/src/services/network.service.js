@@ -1,69 +1,23 @@
-import socketIoClient from "socket.io-client";
-import Peer from "simple-peer";
 import Transaction from "../classes/Transaction";
 import Block from "../classes/Block";
 import Blockchain from "../classes/BlockChain";
 import { MintService } from "./mint.service";
+import { PeerService } from "./peer.service";
 
 // using send method for data transfer
 
 export class NetworkService {
-  peers = {};
-  ws = null;
-  address = "";
   mintService = null;
   blockchainService = null;
   check = [];
   checked = [];
   checking = false;
   tempChain = new Blockchain();
+  peerService = new PeerService((data) => this.handlePeerData(data));
 
   constructor(mintService, blockchainService) {
     this.blockchainService = blockchainService;
     this.mintService = mintService;
-    this.ws = socketIoClient(process.env.REACT_APP_API);
-
-    this.ws.on("me", id => {
-      this.address = id;
-
-      this.ws.emit("open", id);
-    });
-
-    this.ws.on("welcome", address => this.welcome(address));
-
-    this.ws.on("openedSockets", socketAddresses => {
-      socketAddresses.forEach(address => this.handshake(address));
-
-      if (socketAddresses.length === 0) {
-        const transaction = new Transaction(
-          MintService.MINT_PUBLIC_ADDRESS,
-          this.blockchainService.getWalletAddress(),
-          10,
-        );
-
-        transaction.signTransaction(MintService.MINT_KEY_PAIR);
-        this.blockchainService.addTransaction(transaction);
-      }
-
-      setTimeout(() => {
-        const message = this.produceMessage("TYPE_REQUEST_CHAIN", this.address);
-        this.sendMessage(message);
-      }, 2000);
-
-      setTimeout(() => {
-        const message = this.produceMessage("TYPE_REQUEST_INFO", this.address);
-        this.sendMessage(message);
-      }, 3000);
-
-    });
-
-    this.ws.on("receiveSignal", ({ from, data }) => {
-      this.peers[from].signal(data);
-    });
-
-    this.ws.on("peerClosed", address => {
-      delete this.peers[address];
-    });
   }
 
   produceMessage(type, data) {
@@ -71,37 +25,7 @@ export class NetworkService {
   }
 
   sendMessage(message) {
-    for (const address in this.peers) {
-      this.peers[address].send(JSON.stringify(message));
-    }
-  }
-
-  createPeer(address, initiator) {
-    const peer = new Peer({ initiator: initiator });
-
-    peer.on("signal", data => {
-      this.ws.emit("sendSignal", {
-        from: this.address,
-        to: address,
-        data,
-      });
-    });
-
-    peer.on("data", data => {
-      this.handlePeerData(data);
-    });
-
-    peer.on("close", () => {});
-
-    this.peers[address] = peer;
-  }
-
-  welcome(address) {
-    this.createPeer(address, true);
-  }
-
-  handshake(address) {
-    this.createPeer(address, false);
+    this.peerService.broadcastMessage(message);
   }
 
   minePendingTransactions() {
@@ -197,7 +121,7 @@ export class NetworkService {
       }
 
       this.tempChain = new Blockchain();
-      
+
     }
   }
 
@@ -266,7 +190,7 @@ export class NetworkService {
           this.blockchainService.blockchainInstance,
         ) &&
         parseInt(newBlock.timestamp) >
-          parseInt(this.blockchainService.getLatestBlock().timestamp) &&
+        parseInt(this.blockchainService.getLatestBlock().timestamp) &&
         parseInt(newBlock.timestamp) < Date.now() &&
         this.blockchainService.getLatestBlock().hash === newBlock.previousHash &&
         (newDiff + 1 === this.blockchainService.getDifficulty() ||
