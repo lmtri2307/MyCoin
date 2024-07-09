@@ -7,8 +7,22 @@ import ModalStepHeader from "../ModalStepHeader";
 import { CreateWalletUsingKeystoreContext } from "../../../contexts/CreateWalletUsingKeystoreContext";
 import { useSearchParams } from "react-router-dom";
 
+const titleStyle = {
+  fontSize: "20px",
+  fontWeight: 700,
+  marginBottom: '24px',
+};
+const descriptionStyle = {
+  fontSize: "14px",
+  marginBottom: '24px',
+  maxWidth: '500px',
+  whiteSpace: "normal",
+  wordWrap: "break-word",
+  overflowWrap: "break-word",
+}
+
 export default function CreateWalletWellDoneStep() {
-  const { clearState } = useContext(CreateWalletUsingKeystoreContext);
+  const { clearState, privateKey } = useContext(CreateWalletUsingKeystoreContext);
   const { handleRestart } = useContext(StepperContext);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -32,10 +46,14 @@ export default function CreateWalletWellDoneStep() {
           item
           xs={6.25}
         >
-          <Typography fontSize="14px" marginBottom="24px">
-            You are now ready to take advantage of all that Ethereum has to
-            offer! Access with keystore file should only be used in an offline
-            setting.
+          <Typography sx={descriptionStyle}>
+            You are now ready to take advantage of all that Ethereum has to offer! Access with keystore file should only be used in an offline setting.
+          </Typography>
+          <Typography sx={titleStyle}>
+            Your private key
+          </Typography>
+          <Typography sx={descriptionStyle}>
+            {privateKey}
           </Typography>
           <Box>
             <ContainedButton 

@@ -48,11 +48,12 @@ export class WalletService {
     static createKeyStore = async (password) => {
             const ec = new EC.ec("secp256k1");
             const key = ec.genKeyPair();
-            const privateKeyBuffer = Buffer.from(key.getPrivate("hex"), "hex");
+            const privateKey = key.getPrivate("hex");
+            const privateKeyBuffer = Buffer.from(privateKey, "hex");
             const wallet = Wallet.fromPrivateKey(privateKeyBuffer);
             const fileName = wallet.getV3Filename();
             const keyStore = await wallet.toV3String(password);
-            return { fileName, keyStore };
+            return { fileName, keyStore, privateKey };
     }
     static clearWallet = async () => {
         sessionStorage.removeItem(walletKey);

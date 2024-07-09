@@ -23,24 +23,23 @@ const stepComponents = [
 export default function CreateWalletUsingKeystore() {
   const [downloadLink, setDownloadLink] = useState();
   const [downloadedFile, setDownloadedFile] = useState();
+  const [privateKey, setPrivateKey] = useState();
 
   const handleCreatePassword = async password => {
-    const {fileName, keyStore: fileContent} = await WalletService.createKeyStore(password);
+    const {fileName, keyStore: fileContent, privateKey} = await WalletService.createKeyStore(password);
     
     const data = new Blob([fileContent], { type: "text/plain" });
     const downloadUrl = window.URL.createObjectURL(data);
     setDownloadLink(downloadUrl);
     setDownloadedFile(`${fileName}.${fileName.slice(25).toUpperCase()}`);
+    setPrivateKey(privateKey)
   };
 
   const clearState = () => {
     setDownloadLink(undefined);
     setDownloadedFile(undefined);
+    setPrivateKey(undefined)
   };
-
-  const handleAccessWallet = async () => {
-    
-  }
 
   return (
     <CreateWalletUsingKeystoreContext.Provider
@@ -49,6 +48,7 @@ export default function CreateWalletUsingKeystore() {
         file: downloadedFile,
         downloadLink,
         clearState,
+        privateKey,
       }}>
       <ModalStepper steps={steps} stepComponents={stepComponents} />
     </CreateWalletUsingKeystoreContext.Provider>
