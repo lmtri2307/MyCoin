@@ -5,14 +5,20 @@ import ContainedButton from "../../buttons/ContainedButton";
 import TextButton from "../../buttons/TextButton";
 import ModalStepHeader from "../ModalStepHeader";
 import { CreateWalletUsingKeystoreContext } from "../../../contexts/CreateWalletUsingKeystoreContext";
+import { useSearchParams } from "react-router-dom";
 
 export default function CreateWalletWellDoneStep() {
   const { clearState } = useContext(CreateWalletUsingKeystoreContext);
   const { handleRestart } = useContext(StepperContext);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const handleCreateNewWallet = () => {
     clearState();
     handleRestart();
+  }
+
+  const handleAccessWallet = () => {
+    setSearchParams({ modal: "access" }, { replace: true });
   }
 
   return (
@@ -32,7 +38,12 @@ export default function CreateWalletWellDoneStep() {
             setting.
           </Typography>
           <Box>
-            <ContainedButton fullWidth>Access Wallet</ContainedButton>
+            <ContainedButton 
+              fullWidth
+              onClick={handleAccessWallet}
+            >
+              Access Wallet
+            </ContainedButton>
             <TextButton
               onClick={handleCreateNewWallet}
               style={{

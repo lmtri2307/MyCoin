@@ -6,6 +6,7 @@ import OutlinedButton from "../buttons/OutlinedButton";
 import CreateWalletModal from "../modals/create-wallet-modal/CreateWalletModal";
 import AccessWalletModal from "../modals/access-wallet-modal/AccessWalletModal";
 import HomeHeroImage from "./HomeHeroImage";
+import { useSearchParams } from "react-router-dom";
 
 const Wrapper = styled(({ ...props }) => <Box {...props} />)({
   width: "100%",
@@ -28,23 +29,40 @@ const Container = styled(({ ...props }) => <Stack {...props} />)({
 });
 
 export default function HomeHero() {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  // const [isCreateWalletModalOpen, setIsCreateWalletModalOpen] = useState(false);
+  // const [isAccessWalletModalOpen, setIsAccessWalletModalOpen] = useState(false);
+  const isCreateWalletModalOpen = searchParams.get("modal") === "create";
+  const isAccessWalletModalOpen = searchParams.get("modal") === "access";
 
-  const [isCreateWalletModalOpen, setIsCreateWalletModalOpen] = useState(false);
-  const [isAccessWalletModalOpen, setIsAccessWalletModalOpen] = useState(false);
+  const closeModal = () => {
+    setSearchParams({})
+  }
+  const setIsCreateWalletModalOpen = (value) => {
+    if (value) {
+      setSearchParams({ modal: "create" }, { replace: true });
+    } else {
+      closeModal();
+    }
+  }
+  const setIsAccessWalletModalOpen = (value) => {
+    if (value) {
+      setSearchParams({ modal: "access" }, { replace: true });
+    } else {
+      closeModal();
+    }
+  }
 
   const handleOpenCreateWalletModal = () => setIsCreateWalletModalOpen(true);
 
   const handleCloseCreateWalletModal = () => {
     setIsCreateWalletModalOpen(false);
-    navigate("/", { replace: "true" });
   };
 
   const handleOpenAccessWalletModal = () => setIsAccessWalletModalOpen(true);
 
   const handleCloseAccessWalletModal = () => {
     setIsAccessWalletModalOpen(false);
-    navigate("/", { replace: "true" });
   };
   
   return (

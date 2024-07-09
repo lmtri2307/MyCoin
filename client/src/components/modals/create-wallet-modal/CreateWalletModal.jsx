@@ -21,18 +21,33 @@ const wrapperStyle = {
 
 export default function CreateWalletModal({ open, handleClose }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const isChoseKeyStore = searchParams.get("createType") === "keystore";
 
   const handleOnClickCard = queryValue => {
-    setSearchParams(`createType=${queryValue}`, {
-      replace: true,
-    });
+    setSearchParams(prev => {
+      prev.set("createType", queryValue);
+      return prev;
+    })
   };
 
   const handleBack = () => {
-    setSearchParams("", {
-      replace: true,
-    });
+    const backToChoseCreatType = () => {
+      setSearchParams(prev => {
+        prev.delete("createType");
+        return prev;
+      });
+    }
+    const backToHome = () => {
+      handleClose();
+    }
+    const isChosenCreateType = searchParams.get("createType");
+    if(isChosenCreateType) {
+      backToChoseCreatType();
+      return;
+    }
+    backToHome();
   };
+
 
   return (
     <Modal
@@ -49,12 +64,12 @@ export default function CreateWalletModal({ open, handleClose }) {
               id="create-wallet-modal-title"
               variant="h4"
               fontWeight={700}>
-                {searchParams.toString().endsWith("keystore") ? "Create Wallet with Keystore File" : "Create wallet using software"}
+                {isChoseKeyStore ? "Create Wallet with Keystore File" : "Create wallet using software"}
             </Typography>
           </ModalHeader>
           
           <ModalBody>
-            {searchParams.toString().endsWith("keystore") ? (<CreateWalletUsingKeystore/>) : (
+            {isChoseKeyStore ? (<CreateWalletUsingKeystore/>) : (
             <ModalSelectionCard
                 onClick={() => handleOnClickCard("keystore")}
                 imagePath="/images/create-wallet/icon-keystore-file.svg"

@@ -38,6 +38,10 @@ export default function CreateWalletUsingKeystore() {
     setDownloadedFile(undefined);
   };
 
+  const handleAccessWallet = async () => {
+    
+  }
+
   return (
     <CreateWalletUsingKeystoreContext.Provider
       value={{

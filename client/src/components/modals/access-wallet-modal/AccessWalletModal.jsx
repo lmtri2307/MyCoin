@@ -39,15 +39,26 @@ export default function AccessWalletModal({ open, handleClose }) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const handleOnClickCard = queryValue => {
-    setSearchParams(`accessType=${queryValue}`, {
-      replace: true,
-    });
+    // setSearchParams(`accessType=${queryValue}`, {
+    //   replace: true,
+    // });
+    setSearchParams(prev => {
+      prev.set("accessType", queryValue);
+      return prev;
+    })
   };
 
   const handleBack = () => {
-    setSearchParams("", {
-      replace: true,
-    });
+    const isBackable = searchParams.get("accessType");
+    if (isBackable) {
+      setSearchParams(prev => {
+        prev.delete("accessType");
+        return prev;
+      });
+      return;
+    } else {
+      handleClose();
+    }
   };
 
   return (
