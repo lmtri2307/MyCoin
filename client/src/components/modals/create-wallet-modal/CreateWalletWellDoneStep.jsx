@@ -4,9 +4,16 @@ import { StepperContext } from "../../../contexts/StepperContext";
 import ContainedButton from "../../buttons/ContainedButton";
 import TextButton from "../../buttons/TextButton";
 import ModalStepHeader from "../ModalStepHeader";
+import { CreateWalletUsingKeystoreContext } from "../../../contexts/CreateWalletUsingKeystoreContext";
 
 export default function CreateWalletWellDoneStep() {
+  const { clearState } = useContext(CreateWalletUsingKeystoreContext);
   const { handleRestart } = useContext(StepperContext);
+
+  const handleCreateNewWallet = () => {
+    clearState();
+    handleRestart();
+  }
 
   return (
     <Box>
@@ -27,7 +34,7 @@ export default function CreateWalletWellDoneStep() {
           <Box>
             <ContainedButton fullWidth>Access Wallet</ContainedButton>
             <TextButton
-              onClick={handleRestart}
+              onClick={handleCreateNewWallet}
               style={{
                 marginTop: "12px",
               }}

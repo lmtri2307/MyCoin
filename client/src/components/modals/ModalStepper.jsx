@@ -53,6 +53,7 @@ export default function ModalStepper({ steps, stepComponents }) {
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
+    console.log("next");
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
@@ -61,8 +62,10 @@ export default function ModalStepper({ steps, stepComponents }) {
   };
 
   const handleRestart = () => {
+    console.log("restart");
     setActiveStep(0);
   };
+  console.log("activeStep", activeStep);
 
   return (
     <Box sx={{ width: "100%" }}>

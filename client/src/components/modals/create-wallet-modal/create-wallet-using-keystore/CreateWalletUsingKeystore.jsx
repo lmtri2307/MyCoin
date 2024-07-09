@@ -33,12 +33,18 @@ export default function CreateWalletUsingKeystore() {
     setDownloadedFile(`${fileName}.${fileName.slice(25).toUpperCase()}`);
   };
 
+  const clearState = () => {
+    setDownloadLink(undefined);
+    setDownloadedFile(undefined);
+  };
+
   return (
     <CreateWalletUsingKeystoreContext.Provider
       value={{
         handleCreatePassword,
         file: downloadedFile,
         downloadLink,
+        clearState,
       }}>
       <ModalStepper steps={steps} stepComponents={stepComponents} />
     </CreateWalletUsingKeystoreContext.Provider>
