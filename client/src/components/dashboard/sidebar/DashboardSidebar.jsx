@@ -7,7 +7,8 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { MainContext } from "../../../contexts/MainContext";
   
 const drawerWidth = 300;
   
@@ -88,6 +89,7 @@ const list = [
 ];
   
 export default function DashboardSidebar() {
+  const {handleClearWallet} = useContext(MainContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentSection, setCurrentSection] = useState(
@@ -106,6 +108,10 @@ export default function DashboardSidebar() {
     urlSegments.push(section);
     navigate(urlSegments.join("/"));
   };
+
+  const handleLogout = () => {
+    handleClearWallet();
+  }
 
   return (
       <Drawer sx={wrapperStyle} variant="permanent" anchor="left">
@@ -134,7 +140,7 @@ export default function DashboardSidebar() {
         <Divider />
 
         <List>
-          <ListItemButton sx={listItemStyle}>
+          <ListItemButton onClick={handleLogout} sx={listItemStyle}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>

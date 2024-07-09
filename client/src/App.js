@@ -36,6 +36,13 @@ function App() {
     }
   }, []);
 
+  const handleClearWallet = () => {
+    WalletService.clearWallet();
+    setBlockchainService(undefined);
+    setNetworkService(undefined);
+    nagivate("/");
+  }
+
   const handleSetWallet = wallet => {
     WalletService.saveWallet(wallet);
     const mintService = new MintService();
@@ -43,12 +50,11 @@ function App() {
     setBlockchainService(newBlockchainService);
     setNetworkService(new NetworkService(mintService, newBlockchainService));
     nagivate("/wallet/dashboard/main");
-    console.log("Set wallet", wallet);
   };
 
   return (
     <MainContext.Provider
-      value={{ blockchainService, networkService, handleSetWallet }}
+      value={{ blockchainService, networkService, handleSetWallet, handleClearWallet }}
     >
       <Routes>
         <Route path="/" element={<HomePage />} exact />

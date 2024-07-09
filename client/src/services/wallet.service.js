@@ -54,4 +54,7 @@ export class WalletService {
             const keyStore = await wallet.toV3String(password);
             return { fileName, keyStore };
     }
+    static clearWallet = async () => {
+        sessionStorage.removeItem(walletKey);
+    }
 }
