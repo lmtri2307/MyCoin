@@ -2,10 +2,10 @@ import crypto from "crypto";
 import Transaction from "./Transaction";
 
 export default class Block {
-  static copy(obj) {
-    if (obj) {
-      return Object.assign(new Block(), obj);
-    }
+  static fromJson(obj) {
+    const result = Object.assign(new Block(), obj);
+    result.transactions = obj.transactions.map(tx => Transaction.copy(tx));
+    return result;
   }
 
   static calculateHash(block) {
@@ -31,9 +31,9 @@ export default class Block {
       .createHash("sha256")
       .update(
         this.previousHash +
-          this.timestamp +
-          JSON.stringify(this.transactions) +
-          this.nonce,
+        this.timestamp +
+        JSON.stringify(this.transactions) +
+        this.nonce,
       )
       .digest("hex");
   }

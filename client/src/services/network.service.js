@@ -14,13 +14,33 @@ export class NetworkService {
   checking = false;
   tempChain = new Blockchain();
   peerService = new PeerService((data) => this.handlePeerData(data));
+  isDoneInitialSync = false;
+  onDoneInitialSync = () => { };
 
   constructor(mintService, blockchainService) {
     this.blockchainService = blockchainService;
     this.mintService = mintService;
+    
+    setTimeout(() => {
+      this.requestChain(this.peerService.address);
+      this.isDoneInitialSync = true;
+      this.onDoneInitialSync();
+    }, 2000);
+
+    const blockchain = this.blockchainService.blockchainInstance;
+    const blockchainJson = JSON.stringify(blockchain);
+    const parsedBlockchain = JSON.parse(blockchainJson);
+    console.log("parsedBlockchain", parsedBlockchain);
+    console.log("blockchain", blockchain);
+    console.log("blockchainJson", blockchainJson);
+  }
+
+  isReady() {
+    return this.isDoneInitialSync;
   }
 
   produceMessage(type, data) {
+    console.log("type, data", type, data)
     return { type, data };
   }
 
@@ -28,10 +48,14 @@ export class NetworkService {
     this.peerService.broadcastMessage(message);
   }
 
+  requestChain(address) {
+    this.sendMessage(this.produceMessage("TYPE_REQUEST_CHAIN", address));
+  }
+
   minePendingTransactions() {
     this.blockchainService.minePendingTransactions();
     this.sendMessage(
-      this.produceMessage("TYPE_REPLACE_CHAIN", [
+      this.produceMessage("TYPE_BLOCK_CREATED", [
         this.blockchainService.getLatestBlock(),
         this.blockchainService.getDifficulty(),
       ]),
@@ -39,7 +63,7 @@ export class NetworkService {
   }
 
   createTransaction(tx) {
-    const message = this.produceMessage("TYPE_CREATE_TRANSACTION", tx);
+    const message = this.produceMessage("TYPE_TRANSACTION_CREATED", tx);
     this.sendMessage(message);
     this.blockchainService.addTransaction(tx);
   }
@@ -47,14 +71,14 @@ export class NetworkService {
 
   handlePeerData(data) {
     const message = JSON.parse(data);
-
+    console.log("recive data", message.type)
     switch (message.type) {
-      case "TYPE_CREATE_TRANSACTION":
+      case "TYPE_TRANSACTION_CREATED":
         this.createTransactionHandler(message.data);
         break;
-      case "TYPE_REPLACE_CHAIN":
+      case "TYPE_BLOCK_CREATED":
         let [newBlock, newDiff] = message.data;
-        newBlock = Block.copy(newBlock);
+        newBlock = Block.fromJson(newBlock);
         this.replaceChainHandler(newBlock, newDiff);
         break;
       case "TYPE_REQUEST_CHECK":
@@ -64,15 +88,13 @@ export class NetworkService {
         if (this.checking) this.check.push(message.data);
         break;
       case "TYPE_SEND_CHAIN":
-        let { block, finished } = message.data;
-        block = Block.copy(block);
-        this.sendChainHandler(block, finished);
+        this.handleSendChain(message.data);
         break;
       case "TYPE_REQUEST_CHAIN":
-        this.requestChainHandler(message.data);
+        this.handleRequestChain(message.data);
         break;
       case "TYPE_REQUEST_INFO":
-        this.peers[message.data].send(
+        this.peerService.peers[message.data].send(
           JSON.stringify(
             this.produceMessage("TYPE_SEND_INFO", [
               this.blockchainService.getDifficulty(),
@@ -90,13 +112,13 @@ export class NetworkService {
     }
   }
 
-  createTransactionHandler(messageData) {
-    const transaction = Transaction.copy(messageData);
+  createTransactionHandler(transactionJson) {
+    const transaction = Transaction.copy(transactionJson);
     this.blockchainService.addTransaction(transaction);
   }
 
-  requestCheckHandler(messageData) {
-    this.peers[messageData].send(
+  requestCheckHandler(address) {
+    this.peerService.peers[address].send(
       JSON.stringify(
         this.produceMessage(
           "TYPE_SEND_CHECK",
@@ -110,38 +132,25 @@ export class NetworkService {
     );
   }
 
-  sendChainHandler(block, finished) {
-    if (!finished) {
-      this.tempChain.chain.push(block);
-    } else {
-      this.tempChain.chain.push(block);
-
-      if (Blockchain.isValid(this.tempChain)) {
-        this.blockchainService.blockchainInstance.chain = this.tempChain.chain;
-      }
-
-      this.tempChain = new Blockchain();
-
+  handleSendChain({ chain }) {
+    chain = chain.map(block => Block.fromJson(block));
+    const tempChain = new Blockchain();
+    tempChain.chain = chain;
+    if (Blockchain.isValid(tempChain)) {
+      this.blockchainService.blockchainInstance.chain = chain;
     }
   }
 
-  requestChainHandler(messageData) {
-    const peer = this.peers[messageData];
-
-    for (
-      let i = 1;
-      i < this.blockchainService.blockchainInstance.chain.length;
-      i++
-    ) {
-      peer.send(
-        JSON.stringify(
-          this.produceMessage("TYPE_SEND_CHAIN", {
-            block: this.blockchainService.blockchainInstance.chain[i],
-            finished: i === this.blockchainService.getLatestBlockPosition(),
-          }),
-        ),
-      );
-    }
+  handleRequestChain(address) {
+    const peer = this.peerService.peers[address];
+    const chain = this.blockchainService.blockchainInstance.chain;
+    peer.send(
+      JSON.stringify(
+        this.produceMessage("TYPE_SEND_CHAIN", {
+          chain,
+        }),
+      ),
+    );
   }
 
   replaceChainHandler(newBlock, newDiff) {

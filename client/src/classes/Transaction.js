@@ -4,9 +4,8 @@ import { MintService } from "../services/mint.service";
 
 export default class Transaction {
   static copy(obj) {
-    if (obj) {
-      return Object.assign(new Transaction(), obj);
-    }
+    const result = Object.assign(new Transaction(), obj);
+    return result;
   }
 
   static isValid(tx, chain) {
