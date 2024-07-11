@@ -45,20 +45,27 @@ export default class Transaction {
       this.signature = sig.toDER("hex");
     }
   
-    /**
-     * @returns {boolean}
-     */
     isValid() {
-      // If the transaction doesn't have a from address we assume it's a mining reward and that it's valid.
-      if (this.fromAddress === null) return true;
-  
+      if(!this.fromAddress || !this.toAddress) {
+        throw new Error("Transaction must include from and to address");
+      };
+
       if (!this.signature || this.signature.length === 0) {
         throw new Error("No signature in this transaction");
       }
       
+      if (this.amount <= 0) {
+        throw new Error("Transaction amount should be higher than 0");
+      }
+
       const ec = new EC.ec("secp256k1");
       
-      const publicKey = ec.keyFromPublic(this.fromAddress, "hex");
-      return publicKey.verify(this.hash, this.signature);
+      const keypair = ec.keyFromPublic(this.fromAddress, "hex");
+      const isValidSignature = keypair.verify(this.hash, this.signature);
+      if (!isValidSignature) {
+        throw new Error("Invalid signature");
+      }
+
+      return true;
     }
   }

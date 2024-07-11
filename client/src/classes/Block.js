@@ -18,11 +18,11 @@ export default class Block {
     );
   }
 
-  constructor(timestamp, transactions, previousHash = "") {
+  constructor(timestamp, transactions, previousHash = "", validator) {
     this.previousHash = previousHash;
     this.timestamp = timestamp;
     this.transactions = transactions;
-    this.nonce = 0;
+    this.validator = validator;
     this.hash = this.calculateHash();
   }
 
@@ -33,18 +33,9 @@ export default class Block {
         this.previousHash +
         this.timestamp +
         JSON.stringify(this.transactions) +
-        this.nonce,
+        this.validator,
       )
       .digest("hex");
-  }
-
-  mineBlock(difficulty) {
-    while (
-      this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
-    ) {
-      this.nonce++;
-      this.hash = this.calculateHash();
-    }
   }
 
   hasValidTransactions() {

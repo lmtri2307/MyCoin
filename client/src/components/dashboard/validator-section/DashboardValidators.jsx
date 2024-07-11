@@ -45,14 +45,14 @@ export default function DashboardValidators() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box marginTop={3}>
+        {/* <Box marginTop={3}>
 
           <ContainedButton
             onClick={() => networkService.minePendingTransactions()}>
             Start mining
           </ContainedButton>
 
-        </Box>
+        </Box> */}
       </DashboardContent>
     );
 }

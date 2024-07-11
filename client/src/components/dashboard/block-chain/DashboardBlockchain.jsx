@@ -23,7 +23,7 @@ export default function DashboardBlockchain() {
                 no={index + 1}
                 hash={block.hash}
                 previousHash={block.previousHash}
-                nonce={block.nonce}
+                validator={block.validator}
                 timestamp={block.timestamp}
               />
             </Grid>)

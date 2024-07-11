@@ -5,7 +5,6 @@ import Transaction from "./Transaction";
 export default class Blockchain {
   constructor() {
     this.chain = [this.createGenesisBlock()];
-    this.difficulty = 2;
     this.pendingTransactions = [];
     this.miningReward = 5;
     this.blockTime = 30000;
@@ -29,7 +28,7 @@ export default class Blockchain {
   }
 
   createGenesisBlock() {
-    return new Block(Date.parse("2023-07-16"), [], "0");
+    return new Block(Date.parse("2023-07-16"), [], "0", MintService.MINT_PUBLIC_ADDRESS);
   }
 
   getBlock(blockHash) {
@@ -52,75 +51,96 @@ export default class Blockchain {
     return this.chain.length - 1;
   }
 
-  minePendingTransactions(miningRewardAddress) {
+  forgeBlock(transactions, validatorAddress) {
     const rewardTx = new Transaction(
       MintService.MINT_PUBLIC_ADDRESS,
-      miningRewardAddress,
+      validatorAddress,
       this.miningReward,
     );
-
     rewardTx.signTransaction(MintService.MINT_KEY_PAIR);
-    this.pendingTransactions.push(rewardTx);
+    transactions.push(rewardTx);
 
     const block = new Block(
       Date.now(),
-      this.pendingTransactions,
+      transactions,
       this.getLatestBlock().hash,
+      validatorAddress,
     );
 
     this.addBlock(block);
-    this.pendingTransactions = [];
+    return block;
   }
 
   addBlock(block) {
-    block.mineBlock(this.difficulty);
-    this.chain.push(block);
+    if(!block.hasValidTransactions()) {
+      throw new Error("Invalid block: transactions are not valid")
+    }
 
-    this.difficulty += Date.now() - parseInt(this.getLatestBlock().timestamp) < this.blockTime? 1 : -1;
+    const groupedTransactions = block.transactions.reduce((acc, tx) => {
+      if(tx.fromAddress === MintService.MINT_PUBLIC_ADDRESS) {
+        return acc;
+      }
+      
+      if (!acc[tx.fromAddress]) {
+        acc[tx.fromAddress] = [tx];
+        return acc;
+      }
+
+      acc[tx.fromAddress].push(tx);
+      return acc;
+    }, {});
+    
+    Object.keys(groupedTransactions).forEach(address => {
+      const txs = groupedTransactions[address];
+      const totalSpent = txs.reduce((acc, tx) => acc + tx.amount, 0);
+      if (totalSpent > this.getBalanceOfAddress(address)) {
+        throw new Error("Invalid block: not enough balance for transactions");
+      }
+    });
+
+    if(block.previousHash !== this.getLatestBlock().hash) {
+      throw new Error("Invalid block: previous hash is not valid");
+    }
+
+    this.chain.push(block);
   }
 
-  addTransaction(transaction) {
-    if (!transaction.fromAddress || !transaction.toAddress) {
-      throw new Error("Transaction must include from and to address");
+  validateTransaction(transaction) {
+    if(!transaction.isValid()) {
+      throw new Error("Invalid transaction");
     }
 
-    if (!transaction.isValid()) {
-      throw new Error("Cannot add invalid transaction to chain");
-    }
-
-    if (transaction.amount <= 0) {
-      throw new Error("Transaction amount should be higher than 0");
+    if(transaction.fromAddress === MintService.MINT_PUBLIC_ADDRESS) {
+      return true;
     }
 
     const walletBalance = this.getBalanceOfAddress(transaction.fromAddress);
 
-    if (transaction.fromAddress !== MintService.MINT_PUBLIC_ADDRESS) {
-      if (walletBalance < transaction.amount) {
-        throw new Error("Not enough balance");
-      }
-
-     const pendingTxForWallet = this.pendingTransactions.filter(
-        tx => tx.fromAddress === transaction.fromAddress,
-      );
-
-      if (pendingTxForWallet.length > 0) {
-        const totalPendingAmount = pendingTxForWallet
-          .map(tx => tx.amount)
-          .reduce((prev, curr) => prev + curr);
-
-          const totalAmount = totalPendingAmount + transaction.amount;
-          if (totalAmount > walletBalance) {
-            throw new Error(
-              "Pending transactions for this wallet is higher than its balance.",
-            );
-          }
-      }
-    
-      this.pendingTransactions.push(transaction);
-    } 
-    else {
-      this.pendingTransactions.push(transaction);
+    if (walletBalance < transaction.amount) {
+      throw new Error("Not enough balance");
     }
+
+    return true;
+
+    // const pendingTxForWallet = this.pendingTransactions.filter(
+    //   tx => tx.fromAddress === transaction.fromAddress,
+    // );
+
+    // if (pendingTxForWallet.length > 0) {
+    //   const totalPendingAmount = pendingTxForWallet
+    //     .map(tx => tx.amount)
+    //     .reduce((prev, curr) => prev + curr);
+
+    //     const totalAmount = totalPendingAmount + transaction.amount;
+    //     if (totalAmount > walletBalance) {
+    //       throw new Error(
+    //         "Pending transactions for this wallet is higher than its balance.",
+    //       );
+    //     }
+    // }
+  
+    // this.pendingTransactions.push(transaction);
+    
   }
 
   getBalanceOfAddress(address) {

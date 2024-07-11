@@ -49,15 +49,8 @@ export default function DashboardSendSection() {
   };
 
   const handleCreateTransaction = () => {
-    const newTx = new Transaction(
-      blockchainService.wallet.signingKeyObj.getPublic("hex"),
-      toAddress,
-      parseInt(amount),
-    );
-    newTx.signTransaction(blockchainService.wallet.signingKeyObj);
-
     try {
-      networkService.createTransaction(newTx);
+      networkService.createTransaction(toAddress, parseInt(amount));
       setOpenSuccessSnackbar(true);
     } 
     catch (e) {

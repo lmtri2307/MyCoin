@@ -17,8 +17,7 @@ const valueStyle = {
     textOverflow: "ellipsis",
 };
   
-export default function BlockCard({no, hash, previousHash, nonce, timestamp, handleClick}) {
-
+export default function BlockCard({no, hash, validator, previousHash, timestamp, handleClick}) {
     return (
       <Card onClick={handleClick} variant="outlined">
         <CardContent>
@@ -42,9 +41,9 @@ export default function BlockCard({no, hash, previousHash, nonce, timestamp, han
           </Stack>
           <Divider />
           <Box sx={containerStyle}>
-            <Typography sx={labelStyle}>Nonce</Typography>
+            <Typography sx={labelStyle}>Validator</Typography>
             <Typography sx={valueStyle} color="text.secondary">
-              {nonce}
+              {validator}
             </Typography>
           </Box>
           <Divider />

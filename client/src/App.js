@@ -16,6 +16,7 @@ import { NetworkService } from "./services/network.service";
 import { MintService } from "./services/mint.service";
 import { useNavigate } from "react-router-dom";
 import { WalletService } from "./services/wallet.service";
+import SystemHackPage from "./components/dashboard/system-hack/SystemHackPage";
 
 function App() {
   const nagivate = useNavigate();
@@ -86,8 +87,13 @@ function App() {
             />
 
             <Route
-              path="/wallet/dashboard/pendingTransactions"
+              path="/wallet/dashboard/validators"
               element={<DashboardValidators />}
+            />
+
+            <Route
+              path="/wallet/dashboard/systemHack"
+              element={<SystemHackPage />}
             />
 
           </Route>

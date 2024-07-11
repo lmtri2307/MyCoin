@@ -4,8 +4,9 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import { MainContext } from "../../../contexts/MainContext";
@@ -72,9 +73,14 @@ const list = [
       section: "send",
     },
     {
-      icon: <PendingActionsIcon/>,
-      label: "Pending transactions",
-      section: "pendingTransactions",
+      icon: <HowToRegIcon/>,
+      label: "Validators",
+      section: "validators",
+    },
+    {
+      icon: <CurrencyExchangeIcon/>,
+      label: "System Hack",
+      section: "systemHack",
     },
     {
       icon: <DashboardIcon/>,

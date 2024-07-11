@@ -21,6 +21,17 @@ const titleStyle = {
 const listItemStyle = {
     [`& .${listItemTextClasses.root}:first-of-type`]: {
       maxWidth: "500px",
+      flex: "1",
+
+    },
+
+    [`& .${listItemTextClasses.root}:last-of-type`]: {
+      flex: "3",
+      [`& .${typographyClasses.root}`]: {
+        whiteSpace: "normal",
+        wordWrap: "break-word",
+        overflowWrap: "break-word",
+      },
     },
 };
   
@@ -51,6 +62,14 @@ export default function BlockDetail({ blockHash }) {
                   />
                   <ListItemText
                     primary={<Typography>{block.transactions.length}</Typography>}
+                  />
+                </ListItem>
+                <ListItem sx={listItemStyle}>
+                  <ListItemText
+                    primary={<Typography>Validator:</Typography>}
+                  />
+                  <ListItemText
+                    primary={<Typography>{block.validator}</Typography>}
                   />
                 </ListItem>
                 <ListItem sx={listItemStyle}>

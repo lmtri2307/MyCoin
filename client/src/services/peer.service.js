@@ -117,6 +117,14 @@ export class PeerService {
         this.peers[address].peer.send(JSON.stringify(message));
     }
 
+    sendToPublicAddress(publicAddress, message) {
+        const address = Object.keys(this.peers)
+            .find(
+                address => this.peers[address].publicAddress === publicAddress
+            );
+        this.sendToAddress(address, message);
+    }
+
     getPeers() {
         return this.peers;
     }

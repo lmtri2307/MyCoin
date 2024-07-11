@@ -5,7 +5,6 @@ export class BlockchainService {
   wallet = null;
 
   constructor(wallet) {
-    this.blockchainInstance.difficulty = 1;
     this.wallet = wallet;
     this.validators = [this.getWalletAddress()];
   }
@@ -27,8 +26,8 @@ export class BlockchainService {
   }
 
 
-  addTransaction(tx) {
-    this.blockchainInstance.addTransaction(tx);
+  validateTransaction(tx) {
+    return this.blockchainInstance.validateTransaction(tx);
   }
 
   addBlock(block) {
@@ -38,17 +37,18 @@ export class BlockchainService {
   getTransaction(txHash) {
     return this.blockchainInstance.getTransaction(txHash);
   }
-  
+
   getPendingTransactions() {
     return this.blockchainInstance.pendingTransactions;
   }
 
-  minePendingTransactions() {
-    this.blockchainInstance.minePendingTransactions(
+  forgeBlock(transactions) {
+    return this.blockchainInstance.forgeBlock(
+      transactions,
       this.wallet.signingKeyObj.getPublic("hex"),
     );
   }
-  
+
   getLaterBlock() {
     return this.blockchainInstance.getLaterBlock();
   }
@@ -61,12 +61,11 @@ export class BlockchainService {
     return this.blockchainInstance.getLatestBlockPosition();
   }
 
-  getDifficulty() {
-    return this.blockchainInstance.difficulty;
-  }
-
   getWalletAddress() {
     return this.wallet.signingKeyObj.getPublic("hex");
   }
-  
+
+  chooseValidator() {
+    return this.validators[Math.floor(Math.random() * this.validators.length)];
+  }
 }
