@@ -63,6 +63,10 @@ export class NetworkService {
     this.peerService.sendToPublicAddress(publicAddress, message);
   }
 
+  disconnect() {
+    this.peerService.close();
+  }
+
   requestChain(address) {
     if (Object.keys(this.peerService.peers).length === 0) this._onDoneInitialSync();
     this.broadcastMessage(this.produceMessage("TYPE_REQUEST_CHAIN", address));

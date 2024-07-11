@@ -51,7 +51,7 @@ export class PeerService {
         });
 
         this.ws.on("peerClosed", address => {
-            delete this.peers[address];
+            this._removePeer(address);
         });
     }
 
@@ -66,6 +66,8 @@ export class PeerService {
     }
 
     _removePeer(address) {
+        if(!this.peers[address]) return;
+
         const publicAddress = this.peers[address].publicAddress;
         this.blockchainService.validators = this.blockchainService.validators.filter(
             validator => validator !== publicAddress
@@ -91,7 +93,7 @@ export class PeerService {
         });
 
         peer.on("close", () => {
-            delete this.peers[address];
+            this._removePeer(address);
         });
 
         this._addPeer(address, peer, "");
@@ -127,5 +129,12 @@ export class PeerService {
 
     getPeers() {
         return this.peers;
+    }
+
+    close() {
+        for (const address in this.peers) {
+            this.peers[address].peer.destroy();
+        }
+        this.ws.close();
     }
 }

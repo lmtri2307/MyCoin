@@ -95,7 +95,7 @@ const list = [
 ];
   
 export default function DashboardSidebar() {
-  const {handleClearWallet} = useContext(MainContext);
+  const {handleClearWallet, networkService} = useContext(MainContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentSection, setCurrentSection] = useState(
@@ -117,6 +117,7 @@ export default function DashboardSidebar() {
 
   const handleLogout = () => {
     handleClearWallet();
+    networkService.disconnect();
   }
 
   return (
