@@ -7,16 +7,15 @@ import Paper from "../Paper";
 import { addressLabel } from "../../../utils/adress-label";
   
 const cellStyle = {
-    maxWidth: "250px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    whiteSpace: "normal",
+    wordWrap: "break-word",
+    overflowWrap: "break-word",
 };
     
-export default function DashboardPendingTransaction() {
+export default function DashboardValidators() {
   const { blockchainService, networkService } = useContext(MainContext);
-  const pendingTxs = blockchainService.getPendingTransactions();
-
+  const validatorAddresses = blockchainService.validators;
+  validatorAddresses.sort();
     return (
       <DashboardContent>
         <TableContainer component={Paper}>
@@ -24,29 +23,23 @@ export default function DashboardPendingTransaction() {
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
-                <TableCell align="left">From</TableCell>
-                <TableCell align="left">To</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Date</TableCell>
+                <TableCell align="left">Validator Address</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {pendingTxs.map((tx, index) => (
+              {validatorAddresses.map((validator, index) => (
                 <TableRow
-                  key={tx.hash}
+                  key={index}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    {index}
+                    {index + 1}
                   </TableCell>
-                  <TableCell sx={cellStyle} align="right">
-                    {addressLabel(tx.fromAddress)}
+                  <TableCell align="left">
+                    <Box sx={cellStyle}>
+                      {addressLabel(validator)}
+                    </Box>
                   </TableCell>
-                  <TableCell sx={cellStyle} align="right">
-                    {tx.toAddress}
-                  </TableCell>
-                  <TableCell align="right">{tx.amount}</TableCell>
-                  <TableCell align="right">{tx.timestamp}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -7,8 +7,9 @@ export class PeerService {
     address = "";
     onMessageHandler = (message) => { }; // data: {type, data}
 
-    constructor(onDataHandler) {
+    constructor(onDataHandler, blockchainService) {
         this.onMessageHandler = onDataHandler;
+        this.blockchainService = blockchainService;
         this.ws = socketIoClient(process.env.REACT_APP_API);
 
         this.ws.on("me", id => {
@@ -44,13 +45,33 @@ export class PeerService {
             // }, 3000);
         });
 
-        this.ws.on("receiveSignal", ({ from, data }) => {
-            this.peers[from].signal(data);
+        this.ws.on("receiveSignal", ({ from, data, publicAddress }) => {
+            this._addPeer(from, this.peers[from].peer, publicAddress);
+            this.peers[from].peer.signal(data);
         });
 
         this.ws.on("peerClosed", address => {
             delete this.peers[address];
         });
+    }
+
+    _addPeer(address, peer, publicAddress) {
+        this.peers[address] = {
+            peer,
+            publicAddress,
+        };
+        const validators = Object.keys(this.peers)
+            .map(address => this.peers[address].publicAddress);
+        this.blockchainService.updateValidators(validators);
+    }
+
+    _removePeer(address) {
+        const publicAddress = this.peers[address].publicAddress;
+        this.blockchainService.validators = this.blockchainService.validators.filter(
+            validator => validator !== publicAddress
+        );
+        this.peers[address].peer.destroy();
+        delete this.peers[address];
     }
 
     createPeer(address, initiator) {
@@ -60,6 +81,7 @@ export class PeerService {
             this.ws.emit("sendSignal", {
                 from: this.address,
                 to: address,
+                publicAddress: this.blockchainService.getWalletAddress(),
                 data,
             });
         });
@@ -69,9 +91,12 @@ export class PeerService {
         });
 
         peer.on("close", () => {
+            delete this.peers[address];
         });
 
-        this.peers[address] = peer;
+        this._addPeer(address, peer, "");
+        console.log("peers length", Object.keys(this.peers).length);
+        console.log("unique peers length", new Set(Object.keys(this.peers)).size);
     }
 
     welcome(address) {
@@ -84,7 +109,15 @@ export class PeerService {
 
     broadcastMessage(message) {
         for (const address in this.peers) {
-            this.peers[address].send(JSON.stringify(message));
+            this.peers[address].peer.send(JSON.stringify(message));
         }
+    }
+
+    sendToAddress(address, message) {
+        this.peers[address].peer.send(JSON.stringify(message));
+    }
+
+    getPeers() {
+        return this.peers;
     }
 }

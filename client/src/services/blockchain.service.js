@@ -7,6 +7,11 @@ export class BlockchainService {
   constructor(wallet) {
     this.blockchainInstance.difficulty = 1;
     this.wallet = wallet;
+    this.validators = [this.getWalletAddress()];
+  }
+
+  updateValidators(validators) {
+    this.validators = [...validators, this.getWalletAddress()];
   }
 
   getBalanceOfAddress(address) {

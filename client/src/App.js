@@ -5,7 +5,7 @@ import DashboardPage from "./pages/DashboardPage";
 import DashboardMain from "./components/dashboard/main/DashboardMain";
 import DashboardTransaction from "./components/dashboard/transaction/DashboardTransaction";
 import TransactionDetail from "./components/dashboard/transaction/TransactionDetail";
-import DashboardPendingTransaction from "./components/dashboard/pending-transaction/DashboardPendingTransaction";
+import DashboardValidators from "./components/dashboard/validator-section/DashboardValidators";
 import DashboardSendSection from "./components/dashboard/send-section/DashboardSendSection";
 import DashboardBlockchain from "./components/dashboard/block-chain/DashboardBlockchain";
 import { MainContext } from "./contexts/MainContext";
@@ -21,6 +21,8 @@ function App() {
   const nagivate = useNavigate();
   const [blockchainService, setBlockchainService] = useState();
   const [networkService, setNetworkService] = useState();
+  const [flag, setFlag] = useState(false);
+  const rerender = () => setFlag(prev => !prev);
 
   useEffect(() => {
     let needToCleanUp = false;
@@ -47,8 +49,13 @@ function App() {
     WalletService.saveWallet(wallet);
     const mintService = new MintService();
     const newBlockchainService = new BlockchainService(wallet);
+    const newNetworkService = new NetworkService(mintService, newBlockchainService);
+    newNetworkService.onDoneInitialSync = () => {
+      rerender();
+      console.log("called")
+    }
     setBlockchainService(newBlockchainService);
-    setNetworkService(new NetworkService(mintService, newBlockchainService));
+    setNetworkService(newNetworkService);
     nagivate("/wallet/dashboard/main");
   };
 
@@ -80,7 +87,7 @@ function App() {
 
             <Route
               path="/wallet/dashboard/pendingTransactions"
-              element={<DashboardPendingTransaction />}
+              element={<DashboardValidators />}
             />
 
           </Route>

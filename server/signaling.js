@@ -6,8 +6,8 @@ export const signalingHandler = (socket, io) => {
     opened.push(address);
   };
 
-  const sendSignalHandler = ({ from, to, data }) => {
-    socket.broadcast.to(to).emit("receiveSignal", { from, data });
+  const sendSignalHandler = ({ from, to, data, publicAddress }) => {
+    socket.broadcast.to(to).emit("receiveSignal", { from, data, publicAddress });
   };
 
   socket.emit("openedSockets", opened);
