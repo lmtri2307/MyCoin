@@ -36,14 +36,14 @@ const listItemStyle = {
 };
   
 export default function TransactionDetail({ txObj, txHash }) {
-  const { blockchainService } = useContext(MainContext);
+  const { blockchainNetworkService } = useContext(MainContext);
   let tx = null;
 
   if (txObj) {
     tx = txObj;
   } 
   else {
-    tx = blockchainService.getTransaction(txHash);
+    tx = blockchainNetworkService.blockchainService.getTransaction(txHash);
   }
 
   return (

@@ -6,8 +6,8 @@ import TransactionList from "./TransactionList";
 import TransactionListItem from "./TransactionListItem";
 
 export default function DashboardTransaction() {
-  const { blockchainService } = useContext(MainContext);
-  const blocks = blockchainService.getBlocks();
+  const { blockchainNetworkService } = useContext(MainContext);
+  const blocks = blockchainNetworkService.blockchainService.getBlocks();
   const [currentTxHash, setCurrentTxHash] = useState();
 
   return (

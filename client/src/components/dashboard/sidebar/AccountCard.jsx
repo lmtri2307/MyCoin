@@ -55,9 +55,11 @@ const coinBalanceTypoStyle = {
 };
   
 export default function AccountCard() {
-  const { blockchainService } = useContext(MainContext);
-  const publicKey = blockchainService.wallet.signingKeyObj.getPublic("hex");
-  const balance = blockchainService.getBalanceOfAddress(publicKey);
+  const { blockchainNetworkService } = useContext(MainContext);
+  const publicKey = blockchainNetworkService.blockchainService
+    .wallet.signingKeyObj.getPublic("hex");
+  const balance = blockchainNetworkService.blockchainService
+    .getBalanceOfAddress(publicKey);
 
   return (
       <Card sx={cardStyle}>

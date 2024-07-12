@@ -13,8 +13,8 @@ const cellStyle = {
 };
     
 export default function DashboardValidators() {
-  const { blockchainService, networkService } = useContext(MainContext);
-  const validatorAddresses = blockchainService.validators;
+  const { blockchainNetworkService } = useContext(MainContext);
+  const validatorAddresses = blockchainNetworkService.blockchainService.validators;
   validatorAddresses.sort();
     return (
       <DashboardContent>

@@ -36,8 +36,9 @@ const listItemStyle = {
 };
   
 export default function BlockDetail({ blockHash }) {
-    const { blockchainService } = useContext(MainContext);
-    const { blockHeight, block } = blockchainService.getBlock(blockHash);
+    const { blockchainNetworkService } = useContext(MainContext);
+    const { blockHeight, block } = blockchainNetworkService.blockchainService
+      .getBlock(blockHash);
   
     return (
       <Box marginTop={5}>

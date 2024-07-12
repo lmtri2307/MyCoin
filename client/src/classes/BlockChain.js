@@ -11,20 +11,15 @@ export default class Blockchain {
   }
 
   static isValid(blockchain) {
-    for (let i = 1; i < blockchain.chain.length; i++) {
-      const currentBlock = blockchain.chain[i];
-      const prevBlock = blockchain.chain[i - 1];
-
-      if (
-        currentBlock.hash !== Block.calculateHash(currentBlock) ||
-        prevBlock.hash !== currentBlock.previousHash ||
-        !Block.hasValidTransactions(currentBlock, blockchain)
-      ) {
-        return false;
+    const tempChain = new Blockchain();
+    try {
+      for(let i = 1; i < blockchain.chain.length; i++) {
+        tempChain.addBlock(blockchain.chain[i])
       }
+      return true;
+    } catch (error) {
+      return false;
     }
-
-    return true;
   }
 
   createGenesisBlock() {

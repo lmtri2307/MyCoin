@@ -95,7 +95,7 @@ const list = [
 ];
   
 export default function DashboardSidebar() {
-  const {handleClearWallet, networkService} = useContext(MainContext);
+  const {handleClearWallet, blockchainNetworkService} = useContext(MainContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [currentSection, setCurrentSection] = useState(
@@ -117,7 +117,7 @@ export default function DashboardSidebar() {
 
   const handleLogout = () => {
     handleClearWallet();
-    networkService.disconnect();
+    blockchainNetworkService.disconnect();
   }
 
   return (

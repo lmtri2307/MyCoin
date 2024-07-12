@@ -17,11 +17,11 @@ import { MintService } from "./services/mint.service";
 import { useNavigate } from "react-router-dom";
 import { WalletService } from "./services/wallet.service";
 import SystemHackPage from "./components/dashboard/system-hack/SystemHackPage";
+import { BlockchainNetworkService } from "./services/blockchain-network.service";
 
 function App() {
   const nagivate = useNavigate();
-  const [blockchainService, setBlockchainService] = useState();
-  const [networkService, setNetworkService] = useState();
+  const [blockchainNetworkService, setBlockchainNetworkService] = useState();
   const [flag, setFlag] = useState(false);
   const rerender = () => setFlag(prev => !prev);
 
@@ -41,28 +41,25 @@ function App() {
 
   const handleClearWallet = () => {
     WalletService.clearWallet();
-    setBlockchainService(undefined);
-    setNetworkService(undefined);
+    setBlockchainNetworkService(undefined);
     nagivate("/");
   }
 
   const handleSetWallet = wallet => {
     WalletService.saveWallet(wallet);
-    const mintService = new MintService();
     const newBlockchainService = new BlockchainService(wallet);
-    const newNetworkService = new NetworkService(mintService, newBlockchainService);
-    newNetworkService.onDoneInitialSync = () => {
+    const newBlockchainNetworkService = new BlockchainNetworkService(newBlockchainService);
+    newBlockchainNetworkService.onDoneInitialSync = () => {
       rerender();
       console.log("called")
     }
-    setBlockchainService(newBlockchainService);
-    setNetworkService(newNetworkService);
+    setBlockchainNetworkService(newBlockchainNetworkService);
     nagivate("/wallet/dashboard/main");
   };
 
   return (
     <MainContext.Provider
-      value={{ blockchainService, networkService, handleSetWallet, handleClearWallet }}
+      value={{ blockchainNetworkService, handleSetWallet, handleClearWallet }}
     >
       <Routes>
         <Route path="/" element={<HomePage />} exact />

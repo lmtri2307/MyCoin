@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import { MainContext } from "../contexts/MainContext";
 
 export default function DashboardPage() {
-  const { networkService } = useContext(MainContext);
+  const { blockchainNetworkService } = useContext(MainContext);
   const [ showSnakbar, setShowSnackbar ] = useState(false);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -13,7 +13,7 @@ export default function DashboardPage() {
     }
     setShowSnackbar(false);
   };
-  networkService.onProposedBlock = () => {
+  blockchainNetworkService.onProposedBlock = () => {
     setShowSnackbar(true);
   }
   return (

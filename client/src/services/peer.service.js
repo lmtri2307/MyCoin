@@ -7,9 +7,10 @@ export class PeerService {
     address = "";
     onMessageHandler = (message) => { }; // data: {type, data}
 
-    constructor(onDataHandler, blockchainService) {
+    constructor(onDataHandler, onPeerClosed) {
         this.onMessageHandler = onDataHandler;
-        this.blockchainService = blockchainService;
+        this.onPeerClosed = onPeerClosed; // (address) => {}
+
         this.ws = socketIoClient(process.env.REACT_APP_API);
 
         this.ws.on("me", id => {
@@ -22,32 +23,10 @@ export class PeerService {
 
         this.ws.on("openedSockets", socketAddresses => {
             socketAddresses.forEach(address => this.handshake(address));
-
-            // if (socketAddresses.length === 0) {
-            //     const transaction = new Transaction(
-            //         MintService.MINT_PUBLIC_ADDRESS,
-            //         this.blockchainService.getWalletAddress(),
-            //         10,
-            //     );
-
-            //     transaction.signTransaction(MintService.MINT_KEY_PAIR);
-            //     this.blockchainService.addTransaction(transaction);
-            // }
-
-            // setTimeout(() => {
-            //     const message = this.produceMessage("TYPE_REQUEST_CHAIN", this.address);
-            //     this.sendMessage(message);
-            // }, 2000);
-
-            // setTimeout(() => {
-            //     const message = this.produceMessage("TYPE_REQUEST_INFO", this.address);
-            //     this.sendMessage(message);
-            // }, 3000);
         });
 
-        this.ws.on("receiveSignal", ({ from, data, publicAddress }) => {
-            this._addPeer(from, this.peers[from].peer, publicAddress);
-            this.peers[from].peer.signal(data);
+        this.ws.on("receiveSignal", ({ from, data }) => {
+            this.peers[from].signal(data);
         });
 
         this.ws.on("peerClosed", address => {
@@ -55,25 +34,16 @@ export class PeerService {
         });
     }
 
-    _addPeer(address, peer, publicAddress) {
-        this.peers[address] = {
-            peer,
-            publicAddress,
-        };
-        const validators = Object.keys(this.peers)
-            .map(address => this.peers[address].publicAddress);
-        this.blockchainService.updateValidators(validators);
+    _addPeer(address, peer) {
+        this.peers[address] = peer;
     }
 
     _removePeer(address) {
         if(!this.peers[address]) return;
 
-        const publicAddress = this.peers[address].publicAddress;
-        this.blockchainService.validators = this.blockchainService.validators.filter(
-            validator => validator !== publicAddress
-        );
-        this.peers[address].peer.destroy();
+        this.peers[address].destroy();
         delete this.peers[address];
+        this.onPeerClosed(address);
     }
 
     createPeer(address, initiator) {
@@ -83,7 +53,6 @@ export class PeerService {
             this.ws.emit("sendSignal", {
                 from: this.address,
                 to: address,
-                publicAddress: this.blockchainService.getWalletAddress(),
                 data,
             });
         });
@@ -96,7 +65,7 @@ export class PeerService {
             this._removePeer(address);
         });
 
-        this._addPeer(address, peer, "");
+        this._addPeer(address, peer);
         console.log("peers length", Object.keys(this.peers).length);
         console.log("unique peers length", new Set(Object.keys(this.peers)).size);
     }
@@ -111,29 +80,17 @@ export class PeerService {
 
     broadcastMessage(message) {
         for (const address in this.peers) {
-            this.peers[address].peer.send(JSON.stringify(message));
+            this.peers[address].send(JSON.stringify(message));
         }
     }
 
     sendToAddress(address, message) {
-        this.peers[address].peer.send(JSON.stringify(message));
-    }
-
-    sendToPublicAddress(publicAddress, message) {
-        const address = Object.keys(this.peers)
-            .find(
-                address => this.peers[address].publicAddress === publicAddress
-            );
-        this.sendToAddress(address, message);
-    }
-
-    getPeers() {
-        return this.peers;
+        this.peers[address].send(JSON.stringify(message));
     }
 
     close() {
         for (const address in this.peers) {
-            this.peers[address].peer.destroy();
+            this.peers[address].destroy();
         }
         this.ws.close();
     }

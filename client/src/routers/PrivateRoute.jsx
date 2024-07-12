@@ -4,15 +4,15 @@ import { MainContext } from "../contexts/MainContext";
 import LoadingPage from "../components/loading/Loading";
 
 export default function PrivateRoute() {
-  const { blockchainService, networkService } = useContext(MainContext);
+  const { blockchainNetworkService } = useContext(MainContext);
   const [_, rerender] = useState();
   
-  const auth = blockchainService !== undefined && networkService !== undefined;
+  const auth = blockchainNetworkService !== undefined;
   if(!auth) return <Navigate to="/" replace />;
   
-  const isReady = networkService.isReady();
+  const isReady = blockchainNetworkService.isReady();
   if(!isReady){
-    networkService.onDoneInitialSync = () => rerender({});
+    blockchainNetworkService.onDoneInitialSync = () => rerender({});
     return <LoadingPage/>
   };  
   return <Outlet/>;

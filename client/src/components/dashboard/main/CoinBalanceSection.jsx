@@ -15,9 +15,9 @@ const containerStyle = {
 };
 
 export default function CoinBalanceSection() {
-  const { blockchainService } = useContext(MainContext);
-  const balance = blockchainService.getBalanceOfAddress(
-    blockchainService.wallet.signingKeyObj.getPublic("hex"),
+  const { blockchainNetworkService } = useContext(MainContext);
+  const balance = blockchainNetworkService.blockchainService.getBalanceOfAddress(
+    blockchainNetworkService.blockchainService.wallet.signingKeyObj.getPublic("hex"),
   );
 
   return (

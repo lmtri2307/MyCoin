@@ -14,10 +14,10 @@ const containerStyle = {
 };
 
 export default function SystemHackPage() {
-    const {networkService} = useContext(MainContext);
+    const {blockchainNetworkService} = useContext(MainContext);
 
     const handleHackCoin = () => {
-        networkService.hackCoin();
+      blockchainNetworkService.hackCoin();
     }
 
   return (

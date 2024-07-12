@@ -7,8 +7,8 @@ import BlockCard from "./BlockCard";
 import BlockDetail from "./BlockDetail";
 
 export default function DashboardBlockchain() {
-  const { blockchainService } = useContext(MainContext);
-  const blocks = blockchainService.getBlocks();
+  const { blockchainNetworkService } = useContext(MainContext);
+  const blocks = blockchainNetworkService.blockchainService.getBlocks();
   const [currentBlockHash, setCurrentBlockHash] = useState();
 
   return (

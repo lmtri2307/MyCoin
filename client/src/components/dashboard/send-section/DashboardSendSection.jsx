@@ -17,7 +17,7 @@ const containerStyle = {
 };
 
 export default function DashboardSendSection() {
-  const { blockchainService, networkService } = useContext(MainContext);
+  const { blockchainNetworkService } = useContext(MainContext);
   const [amount, setAmount] = useState();
   const [toAddress, setToAddress] = useState();
   const [errorMsg, setErrorMsg] = useState();
@@ -50,7 +50,7 @@ export default function DashboardSendSection() {
 
   const handleCreateTransaction = () => {
     try {
-      networkService.createTransaction(toAddress, parseInt(amount));
+      blockchainNetworkService.createSelfTransaction(toAddress, parseInt(amount));
       setOpenSuccessSnackbar(true);
     } 
     catch (e) {
