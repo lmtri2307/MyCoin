@@ -240,6 +240,7 @@ export class BlockchainNetworkService {
         if (!this.blockchainService.validateTransaction(transaction)) return;
 
         const block = this.blockchainService.forgeBlock([transaction]);
+        this.onUpdateChain();
         const message = this.networkService.produceMessage(
             NetworkMessageType.BLOCK_CREATED,
             {

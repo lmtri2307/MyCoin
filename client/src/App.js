@@ -53,6 +53,9 @@ function App() {
       rerender();
       console.log("called")
     }
+    newBlockchainNetworkService.onUpdateChain = () => {
+      rerender();
+    }
     setBlockchainNetworkService(newBlockchainNetworkService);
     nagivate("/wallet/dashboard/main");
   };

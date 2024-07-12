@@ -7,15 +7,12 @@ import { MainContext } from "../contexts/MainContext";
 export default function DashboardPage() {
   const { blockchainNetworkService } = useContext(MainContext);
   const [ showSnakbar, setShowSnackbar ] = useState(false);
-  const [_, setFlag] = useState(false);
-  const rerender = () => setFlag(prev => !prev);
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setShowSnackbar(false);
   };
-  blockchainNetworkService.onUpdateChain = () => rerender();
   blockchainNetworkService.onProposedBlock = () => {
     setShowSnackbar(true);
   }
