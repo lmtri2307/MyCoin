@@ -12,7 +12,7 @@ To install the MyCoin client, follow these steps:
 4. Install dependencies: `npm install`
 5. Start the MyCoin client: `npm start`
 
-This will start the client application and connect it to the MyCoin network.
+This will start the client application and connect it to the MyCoin network. Access to htpp://localhost:3000 by browser to start using.
 
 ## Features
 

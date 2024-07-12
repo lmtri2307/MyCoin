@@ -22,3 +22,12 @@
 ## Cách cài đặt
 
 **Xem chi tiết trong file README ở server và client**
+
+## Tài liệu tham khảo
+
+- [SavjeeCoin Tutorial Repository] (https://github.com/Savjee/SavjeeCoin)
+- [Build a p2p network and release your cryptocurrency] (https://dev.to/freakcdev297/build-a-p2p-network-and-release-your-cryptocurrency-clf)
+- [Consensus Blogs] (https://viblo.asia/tags/consensus)
+- [Proof of Stake Consensus Mechanism] (https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/)
+- [Naivecoin: a tutorial for building a cryptocurrency] (https://lhartikk.github.io)
+- [Blockchain using NodeJS and Socket.io] (https://dev.to/sadarshannaiynar/blockchain-using-nodejs-and-socketio-5gbe)
