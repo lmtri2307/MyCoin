@@ -18,6 +18,7 @@ export class BlockchainNetworkService {
     isDoneSyncNodes = false;
     onDoneInitialSync = () => { };
     onProposedBlock = () => { };
+    onUpdateChain = () => { };
     nodes = {};
 
     constructor(blockchainService) {
@@ -84,11 +85,13 @@ export class BlockchainNetworkService {
     _addNode(networkAddress, publicAddress) {
         this.nodes[networkAddress] = publicAddress;
         this.blockchainService.updateValidators(Object.values(this.nodes));
+        this.onUpdateChain();
     }
 
     _deleteNode(networkAddress) {
         delete this.nodes[networkAddress];
         this.blockchainService.updateValidators(Object.values(this.nodes));
+        this.onUpdateChain();
     }
 
     init() {
@@ -139,6 +142,7 @@ export class BlockchainNetworkService {
         tempChain.chain = chain;
         if (Blockchain.isValid(tempChain)) {
             this.blockchainService.blockchainInstance.chain = chain;
+            this.onUpdateChain();
         }
 
         this._onDoneSyncChain();
@@ -250,5 +254,6 @@ export class BlockchainNetworkService {
         const { block: blockJson } = data;
         const block = Block.fromJson(blockJson);
         this.blockchainService.addBlock(block);
+        this.onUpdateChain();
     }
 }
